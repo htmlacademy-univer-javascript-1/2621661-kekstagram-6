@@ -1,66 +1,42 @@
-import { getRandomInteger, createIdGenerator, getRandomArrayElement } from './util.js';
+import { getRandomInteger, getRandomArrayElement } from './util.js';
+import {
+  NAMES,
+  MESSAGES,
+  DESCRIPTIONS,
+  PHOTOS_COUNT,
+  MIN_LIKES,
+  MAX_LIKES,
+  MIN_COMMENTS,
+  MAX_COMMENTS,
+  AVATAR_COUNT
+} from './constants.js';
+import { createCommentIdGenerator, createPhotoIdGenerator } from './id-generators.js';
 
-const generateCommentId = createIdGenerator();
+const generateCommentId = createCommentIdGenerator();
+const generatePhotoId = createPhotoIdGenerator();
 
-// Константы переносим прямо в data.js
-const NAMES = [
-  'Артём', 'Мария', 'Алексей', 'Екатерина', 'Дмитрий',
-  'Анна', 'Сергей', 'Ольга', 'Иван', 'Наталья',
-  'Михаил', 'Елена', 'Андрей', 'Светлана', 'Павел'
-];
-
-const MESSAGES = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
-
-const DESCRIPTIONS = [
-  'Прекрасный закат на море',
-  'Горный пейзаж в утреннем тумане',
-  'Улочки старого города',
-  'Кофе и книга в уютном кафе',
-  'Прогулка по осеннему лесу',
-  'Архитектура современного мегаполиса',
-  'Мой пушистый друг',
-  'Вкусный ужин в ресторане',
-  'Путешествие по неизведанным местам',
-  'Творческий беспорядок на рабочем столе',
-  'Спортивные достижения',
-  'Семейный праздник',
-  'Романтический вечер',
-  'Приключения на природе',
-  'Городские граффити и уличное искусство'
-];
-
-// Функция для генерации комментария
+// Функция для создания комментария
 const createComment = () => ({
   id: generateCommentId(),
-  avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
+  avatar: `img/avatar-${getRandomInteger(1, AVATAR_COUNT)}.svg`,
   message: getRandomArrayElement(MESSAGES),
   name: getRandomArrayElement(NAMES)
 });
 
-// Функция для генерации массива комментариев
+// Функция для создания массива комментариев
 const createComments = () => {
-  const commentsCount = getRandomInteger(0, 30);
+  const commentsCount = getRandomInteger(MIN_COMMENTS, MAX_COMMENTS);
   return Array.from({ length: commentsCount }, createComment);
 };
 
-// Функция для генерации объекта фотографии
-const createPhoto = (index) => ({
-  id: index,
-  url: `photos/${index}.jpg`,
+// Функция для создания объекта фотографии
+const createPhoto = () => ({
+  id: generatePhotoId(),
+  url: `photos/${getRandomInteger(1, PHOTOS_COUNT)}.jpg`,
   description: getRandomArrayElement(DESCRIPTIONS),
-  likes: getRandomInteger(15, 200),
+  likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
   comments: createComments()
 });
 
 // Функция для генерации массива фотографий
-export const generatePhotos = () => {
-  const photosCount = 25;
-  return Array.from({ length: photosCount }, (_, index) => createPhoto(index + 1));
-};
+export const generateData = () => Array.from({ length: PHOTOS_COUNT }, createPhoto);
