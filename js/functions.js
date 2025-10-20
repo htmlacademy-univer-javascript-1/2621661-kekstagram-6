@@ -15,3 +15,5 @@ checkStringLength('проверяемая строка', 10);
 isPalindrome('топот');
 isPalindrome('ДовОд');
 isPalindrome('Кекс');
+
+
