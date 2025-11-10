@@ -1,7 +1,10 @@
 import { generatePhotos } from './data.js';
+import { renderThumbnails } from './thumbnails.js';
 
 // Генерация массива фотографий
 const photos = generatePhotos();
 
-// Экспортируем для использования в других модулях
+// Отрисовка миниатюр
+renderThumbnails(photos);
+
 export { photos };
