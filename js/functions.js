@@ -1,3 +1,4 @@
+// Функции из предыдущих заданий
 const checkStringLength = function (string, maxLength) {
   return string.length <= maxLength;
 };
@@ -8,6 +9,7 @@ const isPalindrome = function (string) {
   return cleanString === reversedString;
 };
 
+// Проверки из предыдущих заданий
 checkStringLength('проверяемая строка', 20);
 checkStringLength('проверяемая строка', 18);
 checkStringLength('проверяемая строка', 10);
