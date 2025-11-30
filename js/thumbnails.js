@@ -1,8 +1,10 @@
+import { showFullscreen } from './fullscreen.js';
+
 export function renderThumbnails(photos) {
   const picturesContainer = document.querySelector('.pictures');
   const fragment = document.createDocumentFragment();
 
-  photos.forEach(photo => {
+  photos.forEach((photo) => {
     const template = document.querySelector('#picture').content.querySelector('.picture');
     const pictureElement = template.cloneNode(true);
 
@@ -10,6 +12,12 @@ export function renderThumbnails(photos) {
     pictureElement.querySelector('img').alt = photo.description;
     pictureElement.querySelector('.picture__likes').textContent = photo.likes;
     pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+
+
+    pictureElement.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      showFullscreen(photo);
+    });
 
     fragment.appendChild(pictureElement);
   });
