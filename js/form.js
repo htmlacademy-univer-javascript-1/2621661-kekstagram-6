@@ -1,4 +1,5 @@
 import Pristine from '/vendor/pristine/pristine.min.js';
+import { resetEffects } from './effects.js';
 
 const form = document.querySelector('.img-upload__form');
 const uploadInput = form.querySelector('.img-upload__input');
@@ -19,7 +20,8 @@ const hideForm = () => {
   overlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   form.reset();
-  uploadInput.value = ''; // Важно: сбрасываем значение поля файла
+  uploadInput.value = '';
+  resetEffects(); // Важно: сбрасываем значение поля файла
 };
 
 // Валидация хэш-тегов согласно ТЗ
