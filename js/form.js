@@ -1,107 +1,56 @@
-import Pristine from '/vendor/pristine/pristine.min.js';
-import { resetEffects } from './effects.js';
+import './vendor/pristine/pristine.min.js';
 
 const form = document.querySelector('.img-upload__form');
-const uploadInput = form.querySelector('.img-upload__input');
-const overlay = form.querySelector('.img-upload__overlay');
-const cancelButton = form.querySelector('.img-upload__cancel');
+const fileInput = document.querySelector('#upload-file');
+const overlay = document.querySelector('.img-upload__overlay');
+const body = document.body;
+const cancelButton = document.querySelector('#upload-cancel');
 const hashtagInput = form.querySelector('.text__hashtags');
 const commentInput = form.querySelector('.text__description');
-const submitButton = form.querySelector('.img-upload__submit');
 
-// Функция для показа формы
-const showForm = () => {
-  overlay.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-};
-
-// Функция для скрытия формы
-const hideForm = () => {
-  overlay.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  form.reset();
-  uploadInput.value = '';
-  resetEffects(); // Важно: сбрасываем значение поля файла
-};
-
-// Валидация хэш-тегов согласно ТЗ
-const validateHashtags = (value) => {
-  if (value.trim() === '') {
-    return true; // Хэш-теги необязательны
-  }
-
-  const hashtags = value.trim().toLowerCase().split(/\s+/);
-  const seenHashtags = new Set();
-
-  if (hashtags.length > 5) {
-    return false;
-  }
-
-  for (const hashtag of hashtags) {
-    if (hashtag === '#') {
-      return false;
-    }
-
-    if (!hashtag.startsWith('#')) {
-      return false;
-    }
-
-    // Максимальная длина 20 символов
-    if (hashtag.length > 20) {
-      return false;
-    }
-
-    // После решётки только буквы и цифры
-    const content = hashtag.slice(1);
-    if (!/^[a-zа-яё0-9]+$/i.test(content)) {
-      return false;
-    }
-
-    // Проверка на уникальность (нечувствительность к регистру)
-    if (seenHashtags.has(hashtag)) {
-      return false;
-    }
-    seenHashtags.add(hashtag);
-  }
-
-  return true;
-};
-
-// Создаём экземпляр Pristine
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
-  errorClass: 'img-upload__field-wrapper--invalid',
-  successClass: 'img-upload__field-wrapper--valid',
   errorTextParent: 'img-upload__field-wrapper',
-  errorTextTag: 'div',
-  errorTextClass: 'img-upload__error'
+  errorTextClass: 'form__error'
 });
 
-// Добавляем валидаторы
-pristine.addValidator(
-  hashtagInput,
-  validateHashtags,
-  'Неправильный формат хэш-тегов. Каждый тег должен начинаться с #, содержать только буквы и цифры, быть уникальным. Максимум 5 тегов, длина до 20 символов.'
-);
+function isTextFieldFocused() {
+  return document.activeElement === hashtagInput || document.activeElement === commentInput;
+}
 
-pristine.addValidator(
-  commentInput,
-  (value) => value.length <= 140,
-  'Длина комментария не должна превышать 140 символов'
-);
+function onEscKeydown(evt) {
+  if (evt.key === 'Escape' && !isTextFieldFocused()) {
+    evt.preventDefault();
+    closeForm();
+  }
+}
 
-// Обработчик выбора файла
-uploadInput.addEventListener('change', () => {
-  showForm();
+function closeForm() {
+  overlay.classList.add('hidden');
+  body.classList.remove('modal-open');
+  form.reset();
+  pristine.reset();
+  fileInput.value = '';
+  document.removeEventListener('keydown', onEscKeydown);
+}
+
+function openForm() {
+  overlay.classList.remove('hidden');
+  body.classList.add('modal-open');
+  document.addEventListener('keydown', onEscKeydown);
+}
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files && fileInput.files.length > 0) {
+    openForm();
+  }
 });
 
-// Обработчик закрытия формы
 cancelButton.addEventListener('click', (evt) => {
   evt.preventDefault();
-  hideForm();
+  closeForm();
 });
 
-// Обработчики Escape - не работает при фокусе в полях ввода
 hashtagInput.addEventListener('keydown', (evt) => {
   if (evt.key === 'Escape') {
     evt.stopPropagation();
@@ -114,52 +63,61 @@ commentInput.addEventListener('keydown', (evt) => {
   }
 });
 
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape' && !overlay.classList.contains('hidden')) {
-    evt.preventDefault();
-    hideForm();
+const MAX_HASHTAGS = 5;
+const MAX_HASHTAG_LENGTH = 20;
+const hashtagRegex = /^#[a-zа-яё0-9]{1,19}$/i;
+
+const validateHashtagsCountAndLength = (value) => {
+  if (!value.trim()) {
+    return true;
   }
-});
-
-// Блокировка кнопки отправки на время AJAX-запроса
-const blockSubmitButton = () => {
-  submitButton.disabled = true;
-  submitButton.textContent = 'Отправка...';
+  const tags = value.trim().split(/\s+/);
+  return tags.length <= MAX_HASHTAGS && tags.every((t) => t.length <= MAX_HASHTAG_LENGTH);
 };
 
-const unblockSubmitButton = () => {
-  submitButton.disabled = false;
-  submitButton.textContent = 'Опубликовать';
+const validateHashtagSymbols = (value) => {
+  if (!value.trim()) {
+    return true;
+  }
+  const tags = value.trim().split(/\s+/);
+  return tags.every((t) => hashtagRegex.test(t));
 };
 
+const validateHashtagUnique = (value) => {
+  if (!value.trim()) {
+    return true;
+  }
+  const tags = value.trim().toLowerCase().split(/\s+/);
+  return new Set(tags).size === tags.length;
+};
+
+pristine.addValidator(
+  hashtagInput,
+  validateHashtagsCountAndLength,
+  `Не больше ${MAX_HASHTAGS} тегов, длина — до ${MAX_HASHTAG_LENGTH} символов`
+);
+
+pristine.addValidator(
+  hashtagInput,
+  validateHashtagSymbols,
+  'Тег должен начинаться с # и содержать только буквы и цифры'
+);
+
+pristine.addValidator(
+  hashtagInput,
+  validateHashtagUnique,
+  'Хэштеги не должны повторяться'
+);
+
+pristine.addValidator(
+  commentInput,
+  (value) => value.length <= 140,
+  'Комментарий не должен превышать 140 символов'
+);
 
 form.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-
-  const isValid = pristine.validate();
-
-  if (isValid) {
-    blockSubmitButton();
-
-    const formData = new FormData(form);
-
-    fetch('https://29.javascript.htmlacademy.pro/kekstagram', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          hideForm();
-        } else {
-          throw new Error('Ошибка отправки');
-        }
-      })
-      .catch(() => {
-      })
-      .finally(() => {
-        unblockSubmitButton();
-      });
+  const valid = pristine.validate();
+  if (!valid) {
+    evt.preventDefault();
   }
 });
-
-export { showForm, hideForm };
