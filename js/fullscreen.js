@@ -68,7 +68,7 @@ const closeFullscreen = () => {
 closeButton.addEventListener('click', closeFullscreen);
 
 document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
+  if (evt.key === 'Escape' && !bigPicture.classList.contains('hidden')) {
     closeFullscreen();
   }
 });
