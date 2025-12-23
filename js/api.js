@@ -12,7 +12,7 @@ export const loadPhotos = () => fetch(`${BASE_URL}/data`)
   .then(checkResponse);
 
 // Отправить данные формы (POST)
-export const sendData = (formData) => fetch(BASE_URL, {
+export const sendData = (formData) => fetch(`${BASE_URL}/`, {
   method: 'POST',
   body: formData,
 })
