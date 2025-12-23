@@ -44,13 +44,16 @@ const debouncedRender = debounce((filter) => {
 }, RERENDER_DELAY);
 
 const onFilterClick = (evt) => {
-  const target = evt.target;
-  if (!target.classList.contains('img-filters__button')) {
+  const target = evt.target.closest('.img-filters__button');
+  if (!target) {
     return;
   }
 
+  // Убираем проверку на активный класс, чтобы можно было кликать повторно (если нужно)
+  // Но по ТЗ обычно переключение происходит всегда.
+  // Если нужно предотвратить повторный рендер того же фильтра:
   if (target.classList.contains('img-filters__button--active')) {
-    return;
+    // return; // <-- Если раскомментировать, то повторный клик не сработает
   }
 
   setFilterActive(target);

@@ -104,6 +104,7 @@ noUiSlider.create(effectLevelSlider, {
     },
   },
 });
+effectLevel.classList.add('hidden'); // Скрываем слайдер по умолчанию
 
 // Функция обновления эффекта
 const updateEffect = (effect) => {
@@ -140,8 +141,8 @@ effectsList.addEventListener('change', (evt) => {
 });
 
 // Инициализация по умолчанию
-updateScale(100);
-updateEffect('none');
+// updateScale(100);
+// updateEffect('none');
 
 // Экспортируем функции для сброса
 const resetEffects = () => {

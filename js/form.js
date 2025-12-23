@@ -7,7 +7,6 @@ import { sendData } from './api.js';
 const form = document.querySelector('.img-upload__form');
 const uploadInput = form.querySelector('.img-upload__input');
 const overlay = form.querySelector('.img-upload__overlay');
-const cancelButton = form.querySelector('.img-upload__cancel');
 const hashtagInput = form.querySelector('.text__hashtags');
 const commentInput = form.querySelector('.text__description');
 const submitButton = form.querySelector('.img-upload__submit');
@@ -16,32 +15,13 @@ const effectsPreviews = form.querySelectorAll('.effects__preview');
 
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
-// Функция для показа формы
-const showForm = () => {
-  overlay.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-};
-
-// Функция для скрытия формы
-const hideForm = () => {
-  overlay.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  form.reset();
-  uploadInput.value = '';
-  preview.src = 'img/upload-default-image.jpg';
-  effectsPreviews.forEach((effect) => {
-    effect.style.backgroundImage = '';
-  });
-  resetEffects(); // Важно: сбрасываем значение поля файла
-};
-
 // Валидация хэш-тегов согласно ТЗ
 const validateHashtags = (value) => {
   if (value.trim() === '') {
     return true; // Хэш-теги необязательны
   }
 
-  const hashtags = value.trim().toLowerCase().split(/\s+/);
+  const hashtags = value.trim().toLowerCase().split(/\s+/).filter((tag) => tag.trim().length);
   const seenHashtags = new Set();
 
   if (hashtags.length > 5) {
@@ -85,7 +65,7 @@ const pristine = new Pristine(form, {
   successClass: 'img-upload__field-wrapper--valid',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextTag: 'div',
-  errorTextClass: 'img-upload__error'
+  errorTextClass: 'img-upload__error pristine-error'
 });
 
 // Добавляем валидаторы
@@ -100,6 +80,24 @@ pristine.addValidator(
   (value) => value.length <= 140,
   'Длина комментария не должна превышать 140 символов'
 );
+
+// Функция для показа формы
+const showForm = () => {
+  overlay.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+};
+
+// Функция для скрытия формы
+const hideForm = () => {
+  overlay.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  pristine.reset();
+  preview.src = 'img/upload-default-image.jpg';
+  effectsPreviews.forEach((effect) => {
+    effect.style.backgroundImage = '';
+  });
+  resetEffects();
+};
 
 // Обработчик выбора файла
 uploadInput.addEventListener('change', () => {
@@ -119,10 +117,10 @@ uploadInput.addEventListener('change', () => {
 });
 
 // Обработчик закрытия формы
-cancelButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  hideForm();
-});
+// cancelButton.addEventListener('click', (evt) => {
+//   evt.preventDefault();
+//   hideForm();
+// });
 
 // Обработчики Escape - не работает при фокусе в полях ввода
 hashtagInput.addEventListener('keydown', (evt) => {
@@ -139,8 +137,12 @@ commentInput.addEventListener('keydown', (evt) => {
 
 document.addEventListener('keydown', (evt) => {
   if (evt.key === 'Escape' && !overlay.classList.contains('hidden')) {
-    evt.preventDefault();
-    hideForm();
+    // Проверяем, нет ли открытого сообщения об ошибке
+    const errorPopup = document.querySelector('.error');
+    if (!errorPopup) {
+      evt.preventDefault();
+      form.reset();
+    }
   }
 });
 
@@ -171,6 +173,7 @@ const showMessage = (templateId) => {
 
   function onEsc(evt) {
     if (evt.key === 'Escape') {
+      evt.stopPropagation(); // Предотвращаем всплытие, чтобы не закрылась форма
       removeMessage();
     }
   }
@@ -208,7 +211,7 @@ form.addEventListener('submit', (evt) => {
     const formData = new FormData(form);
     sendData(formData)
       .then(() => {
-        hideForm();
+        form.reset();
         showSuccessMessage();
       })
       .catch(() => {

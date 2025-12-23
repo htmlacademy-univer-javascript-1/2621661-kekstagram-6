@@ -49,7 +49,7 @@
                   <!-- Изменение размера изображения -->
                   <fieldset class="img-upload__scale  scale">
                     <button type="button" class="scale__control  scale__control--smaller">Уменьшить</button>
-                    <input type="text" class="scale__control  scale__control--value" value="55%" title="Image Scale" name="scale" readonly>
+                    <input type="text" class="scale__control  scale__control--value" value="100%" title="Image Scale" name="scale" readonly>
                     <button type="button" class="scale__control  scale__control--bigger">Увеличить</button>
                   </fieldset>
 
@@ -122,7 +122,7 @@
                     <input class="text__hashtags" name="hashtags" placeholder="#ХэшТег"  maxlength="140">
                   </div>
                   <div class="img-upload__field-wrapper">
-                    <textarea class="text__description" name="description" placeholder="Ваш комментарий..." maxlength="140"></textarea>
+                    <textarea class="text__description" name="description" placeholder="Ваш комментарий..."></textarea>
                   </div>
                 </fieldset>
 
@@ -208,6 +208,13 @@
         <span class="picture__likes"></span>
       </p>
     </a>
+  </template>
+
+  <!-- Сообщение с ошибкой загрузки данных -->
+  <template id="data-error">
+    <section class="data-error">
+      <h2 class="data-error__title">Не удалось загрузить данные</h2>
+    </section>
   </template>
 
   <!-- Сообщение с ошибкой загрузки изображения -->
