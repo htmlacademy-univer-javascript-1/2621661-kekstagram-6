@@ -11,6 +11,10 @@ const cancelButton = form.querySelector('.img-upload__cancel');
 const hashtagInput = form.querySelector('.text__hashtags');
 const commentInput = form.querySelector('.text__description');
 const submitButton = form.querySelector('.img-upload__submit');
+const preview = form.querySelector('.img-upload__preview img');
+const effectsPreviews = form.querySelectorAll('.effects__preview');
+
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 // Функция для показа формы
 const showForm = () => {
@@ -24,6 +28,10 @@ const hideForm = () => {
   document.body.classList.remove('modal-open');
   form.reset();
   uploadInput.value = '';
+  preview.src = 'img/upload-default-image.jpg';
+  effectsPreviews.forEach((effect) => {
+    effect.style.backgroundImage = '';
+  });
   resetEffects(); // Важно: сбрасываем значение поля файла
 };
 
@@ -95,6 +103,18 @@ pristine.addValidator(
 
 // Обработчик выбора файла
 uploadInput.addEventListener('change', () => {
+  const file = uploadInput.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    preview.src = URL.createObjectURL(file);
+    effectsPreviews.forEach((effect) => {
+      effect.style.backgroundImage = `url('${preview.src}')`;
+    });
+  }
+
   showForm();
 });
 
