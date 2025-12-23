@@ -1,5 +1,8 @@
-import Pristine from '/vendor/pristine/pristine.min.js';
 import { resetEffects } from './effects.js';
+import { sendData } from './api.js';
+
+// Pristine is loaded as a global from CDN in index.html. If a bundler or local vendor is used,
+// you can replace this with an import. e.g. import Pristine from '/vendor/pristine/pristine.min.js';
 
 const form = document.querySelector('.img-upload__form');
 const uploadInput = form.querySelector('.img-upload__input');
@@ -67,7 +70,7 @@ const validateHashtags = (value) => {
   return true;
 };
 
-// Создаём экземпляр Pristine
+// Создаём экземпляр Pristine (глобальная переменная, загружается из CDN)
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__field-wrapper--invalid',
@@ -133,6 +136,47 @@ const unblockSubmitButton = () => {
 };
 
 
+// Функции для показа/скрытия сообщений успеха/ошибки
+const showMessage = (templateId) => {
+  const template = document.querySelector(`#${templateId}`);
+  if (!template) {
+    return;
+  }
+
+  const fragment = template.content.cloneNode(true);
+  const messageElement = fragment.querySelector('.success') || fragment.querySelector('.error') || fragment.querySelector('.img-upload__message');
+  document.body.appendChild(fragment);
+
+  const node = messageElement ? document.body.querySelector(`${messageElement.tagName.toLowerCase()}${messageElement.className ? `.${messageElement.className.split(' ').join('.')}` : ''}`) : null;
+
+  function onEsc(evt) {
+    if (evt.key === 'Escape') {
+      removeMessage();
+    }
+  }
+
+  function removeMessage() {
+    if (node && node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+    document.removeEventListener('keydown', onEsc);
+  }
+
+  document.addEventListener('keydown', onEsc);
+
+  if (node) {
+    node.addEventListener('click', (evt) => {
+      const target = evt.target;
+      if (target.classList.contains('success__button') || target.classList.contains('error__button') || target === node) {
+        removeMessage();
+      }
+    });
+  }
+};
+
+const showSuccessMessage = () => showMessage('success');
+const showErrorMessage = () => showMessage('error');
+
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
 
@@ -142,24 +186,25 @@ form.addEventListener('submit', (evt) => {
     blockSubmitButton();
 
     const formData = new FormData(form);
-
-    fetch('https://29.javascript.htmlacademy.pro/kekstagram', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          hideForm();
-        } else {
-          throw new Error('Ошибка отправки');
-        }
+    sendData(formData)
+      .then(() => {
+        hideForm();
+        showSuccessMessage();
       })
       .catch(() => {
+        showErrorMessage();
       })
       .finally(() => {
         unblockSubmitButton();
       });
   }
+});
+
+// Закрытие формы и сброс при событии reset (нажатие кнопки reset и др.)
+form.addEventListener('reset', () => {
+  // Здесь не нужно отменять дефолтный ресет — мы хотим вернуть поля в исходное состояние,
+  // но дополнительно нужно закрыть оверлей и сбросить эффекты.
+  hideForm();
 });
 
 export { showForm, hideForm };

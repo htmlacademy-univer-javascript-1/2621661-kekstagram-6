@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="/vendor/nouislider/nouislider.css">
+  <!-- noUiSlider CSS (local vendor) -->
+  <link rel="stylesheet" href="/vendor/nouislider/nouislider.min.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Кекстаграм</title>
-  <script type="module" src="js/main.js"></script>
+  <!-- main module will be loaded after vendor scripts -->
 </head>
 
 <body>
@@ -234,7 +235,12 @@
     <div class="img-upload__message  img-upload__message--loading">Загружаем...</div>
   </template>
 
+  <!-- Vendor scripts (local) -->
   <script src="/vendor/nouislider/nouislider.min.js"></script>
-  <script src="functions.js"></script>
+  <script src="/vendor/pristine/pristine.min.js"></script>
+  <!-- Local helpers (ensure correct path) -->
+  <script src="js/functions.js"></script>
+  <!-- Application entry (module) -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
