@@ -29,7 +29,8 @@ const renderCommentsPortion = () => {
 
   commentsShown += commentsToShow.length;
 
-  commentCount.innerHTML = `${commentsShown} из <span class="comments-count">${currentComments.length}</span> комментариев`;
+  // Обновляем счетчик показанных комментариев и общего количества
+  commentCount.innerHTML = `<span class="social__comment-shown-count">${commentsShown}</span> из <span class="social__comment-total-count">${currentComments.length}</span> комментариев`;
 
   if (commentsShown >= currentComments.length) {
     commentsLoader.classList.add('hidden');
@@ -46,7 +47,13 @@ const showFullscreen = (photo) => {
   bigPicture.querySelector('.big-picture__img img').src = photo.url;
   bigPicture.querySelector('.big-picture__img img').alt = photo.description;
   bigPicture.querySelector('.likes-count').textContent = photo.likes;
-  bigPicture.querySelector('.comments-count').textContent = photo.comments.length;
+
+  // Используем querySelector для поиска элемента внутри bigPicture, а не document
+  const totalCountElement = bigPicture.querySelector('.social__comment-total-count');
+  if (totalCountElement) {
+    totalCountElement.textContent = photo.comments.length;
+  }
+
   bigPicture.querySelector('.social__caption').textContent = photo.description;
 
   commentCount.classList.remove('hidden');
@@ -68,7 +75,7 @@ const closeFullscreen = () => {
 closeButton.addEventListener('click', closeFullscreen);
 
 document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
+  if (evt.key === 'Escape' && !bigPicture.classList.contains('hidden')) {
     closeFullscreen();
   }
 });

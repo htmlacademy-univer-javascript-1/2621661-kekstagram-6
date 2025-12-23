@@ -1195,7 +1195,7 @@ main {
   top: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 10;
 
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -1394,4 +1394,22 @@ main {
 
 .hidden {
   display: none;
+}
+
+.data-error {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background-color: #ff4d4d;
+  color: #ffffff;
+  text-align: center;
+  z-index: 100;
+}
+
+.data-error__title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
 }

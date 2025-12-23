@@ -12,18 +12,15 @@ loadPhotos()
   })
   .catch(() => {
     // При ошибке загрузки показываем шаблон ошибки из HTML
-    const template = document.querySelector('#error');
+    const template = document.querySelector('#data-error');
     if (template) {
       const element = template.content.cloneNode(true);
-      const body = document.body;
-      body.appendChild(element);
-
-      const errorSection = body.querySelector('.error');
-      if (errorSection) {
-        const button = errorSection.querySelector('.error__button');
-        button.addEventListener('click', () => {
-          window.location.reload();
-        });
-      }
+      document.body.appendChild(element);
+      setTimeout(() => {
+        const errorElement = document.querySelector('.data-error');
+        if (errorElement) {
+          errorElement.remove();
+        }
+      }, 5000);
     }
   });
