@@ -136,6 +136,47 @@ const unblockSubmitButton = () => {
 };
 
 
+// Функции для показа/скрытия сообщений успеха/ошибки
+const showMessage = (templateId) => {
+  const template = document.querySelector(`#${templateId}`);
+  if (!template) {
+    return;
+  }
+
+  const fragment = template.content.cloneNode(true);
+  const messageElement = fragment.querySelector('.success') || fragment.querySelector('.error') || fragment.querySelector('.img-upload__message');
+  document.body.appendChild(fragment);
+
+  const node = messageElement ? document.body.querySelector(`${messageElement.tagName.toLowerCase()}${messageElement.className ? `.${messageElement.className.split(' ').join('.')}` : ''}`) : null;
+
+  function onEsc(evt) {
+    if (evt.key === 'Escape') {
+      removeMessage();
+    }
+  }
+
+  function removeMessage() {
+    if (node && node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+    document.removeEventListener('keydown', onEsc);
+  }
+
+  document.addEventListener('keydown', onEsc);
+
+  if (node) {
+    node.addEventListener('click', (evt) => {
+      const target = evt.target;
+      if (target.classList.contains('success__button') || target.classList.contains('error__button') || target === node) {
+        removeMessage();
+      }
+    });
+  }
+};
+
+const showSuccessMessage = () => showMessage('success');
+const showErrorMessage = () => showMessage('error');
+
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
 
@@ -160,51 +201,10 @@ form.addEventListener('submit', (evt) => {
 });
 
 // Закрытие формы и сброс при событии reset (нажатие кнопки reset и др.)
-form.addEventListener('reset', (evt) => {
+form.addEventListener('reset', () => {
   // Здесь не нужно отменять дефолтный ресет — мы хотим вернуть поля в исходное состояние,
   // но дополнительно нужно закрыть оверлей и сбросить эффекты.
   hideForm();
 });
-
-// Функции для показа/скрытия сообщений успеха/ошибки
-const showMessage = (templateId) => {
-  const template = document.querySelector(`#${templateId}`);
-  if (!template) {
-    return;
-  }
-
-  const fragment = template.content.cloneNode(true);
-  const messageElement = fragment.querySelector('.success') || fragment.querySelector('.error') || fragment.querySelector('.img-upload__message');
-  document.body.appendChild(fragment);
-
-  const node = messageElement ? document.body.querySelector(messageElement.tagName.toLowerCase() + (messageElement.className ? '.' + messageElement.className.split(' ').join('.') : '')) : null;
-
-  const removeMessage = () => {
-    if (node && node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-    document.removeEventListener('keydown', onEsc);
-  };
-
-  const onEsc = (evt) => {
-    if (evt.key === 'Escape') {
-      removeMessage();
-    }
-  };
-
-  document.addEventListener('keydown', onEsc);
-
-  if (node) {
-    node.addEventListener('click', (evt) => {
-      const target = evt.target;
-      if (target.classList.contains('success__button') || target.classList.contains('error__button') || target === node) {
-        removeMessage();
-      }
-    });
-  }
-};
-
-const showSuccessMessage = () => showMessage('success');
-const showErrorMessage = () => showMessage('error');
 
 export { showForm, hideForm };
