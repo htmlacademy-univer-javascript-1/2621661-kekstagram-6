@@ -1,5 +1,6 @@
 import { loadPhotos } from './api.js';
 import { renderThumbnails } from './thumbnails.js';
+import { initFilters } from './filters.js';
 import './form.js';
 import './effects.js';
 
@@ -7,6 +8,7 @@ import './effects.js';
 loadPhotos()
   .then((photos) => {
     renderThumbnails(photos);
+    initFilters(photos);
   })
   .catch(() => {
     // При ошибке загрузки показываем шаблон ошибки из HTML

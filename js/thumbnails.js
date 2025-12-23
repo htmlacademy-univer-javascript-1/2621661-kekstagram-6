@@ -2,6 +2,10 @@ import { showFullscreen } from './fullscreen.js';
 
 export function renderThumbnails(photos) {
   const picturesContainer = document.querySelector('.pictures');
+  // Удаляем старые фотографии
+  const oldPictures = picturesContainer.querySelectorAll('.picture');
+  oldPictures.forEach((picture) => picture.remove());
+
   const fragment = document.createDocumentFragment();
 
   photos.forEach((photo) => {
