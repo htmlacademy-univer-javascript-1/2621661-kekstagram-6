@@ -19,22 +19,11 @@ export const createIdGenerator = () => {
 export const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
 // Функция debounce для устранения дребезга
-export function debounce (callback, timeoutDelay = 500) {
+export const debounce = (callback, timeoutDelay = 500) => {
   let timeoutId;
   return (...rest) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
   };
-}
+};
 
-// Функция throttle для пропуска кадров
-export function throttle (callback, delayBetweenFrames) {
-  let lastTime = 0;
-  return (...rest) => {
-    const now = new Date();
-    if (now - lastTime >= delayBetweenFrames) {
-      callback.apply(this, rest);
-      lastTime = now;
-    }
-  };
-}

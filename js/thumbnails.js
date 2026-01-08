@@ -1,6 +1,6 @@
 import { showFullscreen } from './fullscreen.js';
 
-export function renderThumbnails(photos) {
+export const renderThumbnails = (photos) => {
   const picturesContainer = document.querySelector('.pictures');
   // Удаляем старые фотографии
   const oldPictures = picturesContainer.querySelectorAll('.picture');

@@ -10,6 +10,7 @@ const effectLevelValue = document.querySelector('.effect-level__value');
 const SCALE_STEP = 25;
 const SCALE_MIN = 25;
 const SCALE_MAX = 100;
+const PERCENT_DIVIDER = 100;
 let currentScale = 100;
 let currentEffect = 'none';
 
@@ -17,7 +18,7 @@ let currentEffect = 'none';
 const updateScale = (value) => {
   currentScale = value;
   scaleControl.value = `${currentScale}%`;
-  imagePreview.style.transform = `scale(${currentScale / 100})`;
+  imagePreview.style.transform = `scale(${currentScale / PERCENT_DIVIDER})`;
 };
 
 // Обработчики кнопок масштаба

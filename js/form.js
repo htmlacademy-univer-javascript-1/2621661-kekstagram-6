@@ -166,10 +166,10 @@ const showMessage = (templateId) => {
   }
 
   const fragment = template.content.cloneNode(true);
-  const messageElement = fragment.querySelector('.success') || fragment.querySelector('.error') || fragment.querySelector('.img-upload__message');
+  const message = fragment.querySelector('.success') || fragment.querySelector('.error') || fragment.querySelector('.img-upload__message');
   document.body.appendChild(fragment);
 
-  const node = messageElement ? document.body.querySelector(`${messageElement.tagName.toLowerCase()}${messageElement.className ? `.${messageElement.className.split(' ').join('.')}` : ''}`) : null;
+  const node = message ? document.body.querySelector(`${message.tagName.toLowerCase()}${message.className ? `.${message.className.split(' ').join('.')}` : ''}`) : null;
 
   function onEsc(evt) {
     if (evt.key === 'Escape') {
