@@ -17,9 +17,9 @@ loadPhotos()
       const element = template.content.cloneNode(true);
       document.body.appendChild(element);
       setTimeout(() => {
-        const errorElement = document.querySelector('.data-error');
-        if (errorElement) {
-          errorElement.remove();
+        const error = document.querySelector('.data-error');
+        if (error) {
+          error.remove();
         }
       }, 5000);
     }

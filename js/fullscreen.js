@@ -8,16 +8,16 @@ let currentComments = [];
 let commentsShown = 0;
 const COMMENTS_PER_PORTION = 5;
 
-const createComment = (comment) => {
-  const commentElement = document.createElement('li');
-  commentElement.classList.add('social__comment');
+const createComment = (data) => {
+  const comment = document.createElement('li');
+  comment.classList.add('social__comment');
 
-  commentElement.innerHTML = `
-    <img class="social__picture" src="${comment.avatar}" alt="${comment.name}" width="35" height="35">
-    <p class="social__text">${comment.message}</p>
+  comment.innerHTML = `
+    <img class="social__picture" src="${data.avatar}" alt="${data.name}" width="35" height="35">
+    <p class="social__text">${data.message}</p>
   `;
 
-  return commentElement;
+  return comment;
 };
 
 const renderCommentsPortion = () => {
